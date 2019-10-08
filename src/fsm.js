@@ -88,8 +88,11 @@ class FSM {
      */
     trigger(event) {
 
-
+        if (this.activestate == 'Error') {
+            throw new Error('Error');
+        }
         if (!Object.keys(this.states).some(x => x == this.getState())) {
+            this.activestate = 'Error';
             throw new Error('Error');
         }
         if (!Object.keys(this.mapper).some(x => x == event)) {
@@ -168,7 +171,11 @@ class FSM {
     /**
      * Clears transition history
      */
-    clearHistory() { }
+    clearHistory() {
+        this.previous = null;
+        this.changedStatuses = [];
+
+    }
 }
 
 const config = {
@@ -198,22 +205,7 @@ const config = {
         },
     }
 };
-const student = new FSM(config);
 
-student.trigger('study');
-student.undo();
-student.redo();
-student.getState();
-
-student.trigger('get_tired');
-student.trigger('get_hungry');
-
-student.undo();
-student.undo();
-
-student.redo();
-student.redo();
-student.getState()
 module.exports = FSM;
 
 /** @Created by Uladzimir Halushka **/
